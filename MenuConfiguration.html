@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hoang Gia Code - Tối ưu trải nghiệm chơi game Free Fire và Free Fire MAX. Được hàng ngàn game thủ tin dùng!" />
+  <meta name="keywords" content="Hoang Gia Code, Free Fire, Free Fire MAX, tối ưu game, sửa lag, tăng tốc game" />
+  <meta name="author" content="Hoang Gia Code" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" href="favicon.ico">
+  <title>@hoanggiacode - Tối Ưu Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+    }
+
+    body {
+      background: url('doc.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      transition: background-image 0.3s ease;
+      position: relative;
+    }
+
+    @media screen and (orientation: landscape) {
+      body {
+        background-image: url('ngang.jpeg');
+      }
+    }
+
+    /* Video Background */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+      overflow: hidden;
+    }
+
+    .video-background iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* LED Border Effect */
+    .led-border::before, .led-border::after,
+    .led-right, .led-bottom {
+      content: '';
+      position: fixed;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+      background-size: 400% 400%;
+      animation: ledGlow 4s linear infinite;
+    }
+
+    .led-border::before { top: 0; left: 0; width: 100%; height: 6px; }
+    .led-border::after { top: 0; left: 0; width: 6px; height: 100%; }
+    .led-right { top: 0; right: 0; width: 6px; height: 100%; }
+    .led-bottom { bottom: 0; left: 0; width: 100%; height: 6px; }
+
+    @keyframes ledGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 400% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Toggle Button */
+    .toggle-button {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 1000;
+      cursor: move;
+      background: #1a1a1a;
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.5), inset 0 0 10px rgba(0, 255, 255, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      touch-action: none;
+    }
+
+    .toggle-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.7), inset 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    .toggle-icon {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Menu Styling */
+    .menu {
+      position: fixed;
+      top: 90px;
+      left: 15px;
+      width: 280px;
+      max-width: 90vw;
+      background: rgba(30, 30, 30, 0.95);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 999;
+      display: none;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .menu.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .menu-header {
+      text-align: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 10px;
+    }
+
+    .menu-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #00ccff;
+    }
+
+    .menu-header p {
+      font-size: 12px;
+      color: #cccccc;
+    }
+
+    .menu-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .menu-item span {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .menu-item a {
+      color: #00ccff;
+      text-decoration: none;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+      transition: color 0.2s ease;
+    }
+
+    .menu-item a:hover {
+      color: #00ffcc;
+    }
+
+    /* Switch Styling */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #555;
+      transition: background-color 0.3s ease;
+      border-radius: 20px;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    input:checked + .slider {
+      background-color: #00ccff;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Alert Box */
+    .alert-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 320px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      z-index: 1001;
+      display: none;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.3s ease-out;
+    }
+
+    .alert-box.show {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .alert-box p {
+      margin-bottom: 16px;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .alert-box button {
+      padding: 10px 24px;
+      border: none;
+      background: #00ccff;
+      color: #ffffff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .alert-box button:hover {
+      background: #00aaff;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 12px;
+      color: #cccccc;
+      z-index: 999;
+    }
+
+    .footer a {
+      color: #00ccff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #00ffcc;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Video Background -->
+  <div class="video-background">
+    <iframe src="https://www.youtube.com/embed/f7BKYmfZMw8?autoplay=1&mute=1&loop=1&playlist=f7BKYmfZMw8&controls=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+
+  <!-- LED Border -->
+  <div class="led-border"></div>
+  <div class="led-right"></div>
+  <div class="led-bottom"></div>
+
+  <!-- Toggle Button -->
+  <div class="toggle-button" id="toggleButton" onclick="toggleMenu()">
+    <img src="BAAA848A-2AFD-40A0-A85C-562D5030C695.png" alt="Toggle Menu" class="toggle-icon">
+  </div>
+
+  <!-- Menu -->
+  <div class="menu" id="menu">
+    <div class="menu-header">
+      <h2>Hoang Gia Code</h2>
+      <p>Tối Ưu Game Chuyên Nghiệp</p>
+    </div>
+    <div class="menu-item">
+      <span>Tăng Tốc Màn Hình</span>
+      <label class="switch">
+        <input type="checkbox" onchange="handleToggle(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="menu-item">
+      <span>Boost Game</span>
+      <label class="switch">
+        <input type="checkbox" onchange="handleToggle(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="menu-item">
+      <span>Sửa Lag</span>
+      <label class="switch">
+        <input type="checkbox" onchange="handleToggle(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="menu-item">
+      <a href="hoanggiacode.mobileconfig" download>Tải Cấu Hình</a>
+    </div>
+    <div class="menu-item">
+      <a href="freefireth://">Mở Free Fire</a>
+    </div>
+    <div class="menu-item">
+      <a href="freefiremax://">Mở Free Fire MAX</a>
+    </div>
+    <div class="menu-item">
+      <a href="https://t.me/trumchimbe" target="_blank">Telegram Trùm Chim Bé</a>
+    </div>
+    <div class="menu-item">
+      <a href="https://t.me/hoanggiacode" target="_blank">Kênh Hoàng Gia Code</a>
+    </div>
+    <div class="menu-item">
+      <a href="https://t.me/hoanggiagame" target="_blank">Nhóm Chat Hoàng Gia Game</a>
+    </div>
+  </div>
+
+  <!-- Alert Box -->
+  <div id="alertBox" class="alert-box">
+    <p id="alertText">Kích hoạt thành công</p>
+    <button onclick="closeAlert()">OK</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2025 Hoang Gia Code. Đã hỗ trợ hơn 10,000 game thủ! <br>
+    <a href="https://t.me/hoanggiacode" target="_blank">Liên hệ</a> | 
+    <a href="https://t.me/hoanggiagame" target="_blank">Tham gia cộng đồng</a></p>
+  </div>
+
+  <!-- Audio -->
+  <audio id="sound" src="click.mp3" preload="auto"></audio>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.classList.toggle('active');
+    }
+
+    function handleToggle(checkbox) {
+      const alertText = document.getElementById('alertText');
+      const alertBox = document.getElementById('alertBox');
+      const audio = document.getElementById('sound');
+
+      alertText.innerHTML = checkbox.checked 
+        ? 'Kích hoạt thành công<br>@hoanggiacode | @trumchimbe' 
+        : 'Tắt thành công';
+      
+      alertBox.classList.add('show');
+      try {
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      } catch (e) {
+        console.log('Audio error:', e);
+      }
+    }
+
+    function closeAlert() {
+      document.getElementById('alertBox').classList.remove('show');
+    }
+
+    // Draggable Toggle Button
+    const toggleButton = document.getElementById('toggleButton');
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+
+    toggleButton.addEventListener('mousedown', startDragging);
+    toggleButton.addEventListener('touchstart', startDragging);
+
+    function startDragging(e) {
+      e.preventDefault();
+      isDragging = true;
+      if (e.type === 'touchstart') {
+        initialX = e.touches[0].clientX - currentX;
+        initialY = e.touches[0].clientY - currentY;
+      } else {
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+      }
+
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('touchmove', drag);
+      document.addEventListener('mouseup', stopDragging);
+      document.addEventListener('touchend', stopDragging);
+    }
+
+    function drag(e) {
+      if (isDragging) {
+        e.preventDefault();
+        let clientX, clientY;
+        if (e.type === 'touchmove') {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        currentX = clientX - initialX;
+        currentY = clientY - initialY;
+
+        // Boundary checks
+        currentX = Math.max(0, Math.min(currentX, window.innerWidth - toggleButton.offsetWidth));
+        currentY = Math.max(0, Math.min(currentY, window.innerHeight - toggleButton.offsetHeight));
+
+        toggleButton.style.left = currentX + 'px';
+        toggleButton.style.top = currentY + 'px';
+      }
+    }
+
+    function stopDragging() {
+      isDragging = false;
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('touchmove', drag);
+      document.removeEventListener('mouseup', stopDragging);
+      document.removeEventListener('touchend', stopDragging);
+    }
+
+    // Initialize position
+    currentX = 15;
+    currentY = 15;
+
+    // Prevent context menu on long press
+    window.addEventListener('contextmenu', (e) => e.preventDefault());
+  </script>
+</body>
+</html>

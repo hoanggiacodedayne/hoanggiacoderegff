@@ -122,6 +122,7 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
       animation: slideIn 0.3s ease-out;
+      touch-action: none;
     }
 
     .menu.active {
@@ -138,6 +139,7 @@
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       margin-bottom: 10px;
+      cursor: move; /* Allow dragging from header */
     }
 
     .menu-header h2 {
@@ -323,7 +325,7 @@
 
   <!-- Menu -->
   <div class="menu" id="menu">
-    <div class="menu-header">
+    <div class="menu-header" id="menuHeader">
       <h2>Hoang Gia Code</h2>
       <p>Tối Ưu Game Chuyên Nghiệp</p>
     </div>
@@ -349,7 +351,17 @@
       </label>
     </div>
     <div class="menu-item">
-      <a href="hoanggiacode.mobileconfig" download>Tải Cấu Hình</a>
+      <span>Nhẹ Tâm 100%</span>
+      <label class="switch">
+        <input type="checkbox" onchange="handleToggle(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="menu-item">
+      <a href="hoanggiacode.mobileconfig" download>Tải Cấu Hình 1</a>
+    </div>
+    <div class="menu-item">
+      <a href="hoanggiacode1.mobileconfig" download>Tải Cấu Hình 2</a>
     </div>
     <div class="menu-item">
       <a href="freefireth://">Mở Free Fire</a>
@@ -413,34 +425,34 @@
 
     // Draggable Toggle Button
     const toggleButton = document.getElementById('toggleButton');
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
+    let isDraggingButton = false;
+    let buttonX;
+    let buttonY;
+    let buttonInitialX;
+    let buttonInitialY;
 
-    toggleButton.addEventListener('mousedown', startDragging);
-    toggleButton.addEventListener('touchstart', startDragging);
+    toggleButton.addEventListener('mousedown', startDraggingButton);
+    toggleButton.addEventListener('touchstart', startDraggingButton);
 
-    function startDragging(e) {
+    function startDraggingButton(e) {
       e.preventDefault();
-      isDragging = true;
+      isDraggingButton = true;
       if (e.type === 'touchstart') {
-        initialX = e.touches[0].clientX - currentX;
-        initialY = e.touches[0].clientY - currentY;
+        buttonInitialX = e.touches[0].clientX - buttonX;
+        buttonInitialY = e.touches[0].clientY - buttonY;
       } else {
-        initialX = e.clientX - currentX;
-        initialY = e.clientY - currentY;
+        buttonInitialX = e.clientX - buttonX;
+        buttonInitialY = e.clientY - buttonY;
       }
 
-      document.addEventListener('mousemove', drag);
-      document.addEventListener('touchmove', drag);
-      document.addEventListener('mouseup', stopDragging);
-      document.addEventListener('touchend', stopDragging);
+      document.addEventListener('mousemove', dragButton);
+      document.addEventListener('touchmove', dragButton);
+      document.addEventListener('mouseup', stopDraggingButton);
+      document.addEventListener('touchend', stopDraggingButton);
     }
 
-    function drag(e) {
-      if (isDragging) {
+    function dragButton(e) {
+      if (isDraggingButton) {
         e.preventDefault();
         let clientX, clientY;
         if (e.type === 'touchmove') {
@@ -451,29 +463,92 @@
           clientY = e.clientY;
         }
 
-        currentX = clientX - initialX;
-        currentY = clientY - initialY;
+        buttonX = clientX - buttonInitialX;
+        buttonY = clientY - buttonInitialY;
 
         // Boundary checks
-        currentX = Math.max(0, Math.min(currentX, window.innerWidth - toggleButton.offsetWidth));
-        currentY = Math.max(0, Math.min(currentY, window.innerHeight - toggleButton.offsetHeight));
+        buttonX = Math.max(0, Math.min(buttonX, window.innerWidth - toggleButton.offsetWidth));
+        buttonY = Math.max(0, Math.min(buttonY, window.innerHeight - toggleButton.offsetHeight));
 
-        toggleButton.style.left = currentX + 'px';
-        toggleButton.style.top = currentY + 'px';
+        toggleButton.style.left = buttonX + 'px';
+        toggleButton.style.top = buttonY + 'px';
       }
     }
 
-    function stopDragging() {
-      isDragging = false;
-      document.removeEventListener('mousemove', drag);
-      document.removeEventListener('touchmove', drag);
-      document.removeEventListener('mouseup', stopDragging);
-      document.removeEventListener('touchend', stopDragging);
+    function stopDraggingButton() {
+      isDraggingButton = false;
+      document.removeEventListener('mousemove', dragButton);
+      document.removeEventListener('touchmove', dragButton);
+      document.removeEventListener('mouseup', stopDraggingButton);
+      document.removeEventListener('touchend', stopDraggingButton);
     }
 
-    // Initialize position
-    currentX = 15;
-    currentY = 15;
+    // Draggable Menu
+    const menu = document.getElementById('menu');
+    const menuHeader = document.getElementById('menuHeader');
+    let isDraggingMenu = false;
+    let menuX;
+    let menuY;
+    let menuInitialX;
+    let menuInitialY;
+
+    menuHeader.addEventListener('mousedown', startDraggingMenu);
+    menuHeader.addEventListener('touchstart', startDraggingMenu);
+
+    function startDraggingMenu(e) {
+      e.preventDefault();
+      isDraggingMenu = true;
+      if (e.type === 'touchstart') {
+        menuInitialX = e.touches[0].clientX - menuX;
+        menuInitialY = e.touches[0].clientY - menuY;
+      } else {
+        menuInitialX = e.clientX - menuX;
+        menuInitialY = e.clientY - menuY;
+      }
+
+      document.addEventListener('mousemove', dragMenu);
+      document.addEventListener('touchmove', dragMenu);
+      document.addEventListener('mouseup', stopDraggingMenu);
+      document.addEventListener('touchend', stopDraggingMenu);
+    }
+
+    function dragMenu(e) {
+      if (isDraggingMenu) {
+        e.preventDefault();
+        let clientX, clientY;
+        if (e.type === 'touchmove') {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        menuX = clientX - menuInitialX;
+        menuY = clientY - menuInitialY;
+
+        // Boundary checks
+        menuX = Math.max(0, Math.min(menuX, window.innerWidth - menu.offsetWidth));
+        menuY = Math.max(0, Math.min(menuY, window.innerHeight - menu.offsetHeight));
+
+        menu.style.left = menuX + 'px';
+        menu.style.top = menuY + 'px';
+      }
+    }
+
+    function stopDraggingMenu() {
+      isDraggingMenu = false;
+      document.removeEventListener('mousemove', dragMenu);
+      document.removeEventListener('touchmove', dragMenu);
+      document.removeEventListener('mouseup', stopDraggingMenu);
+      document.removeEventListener('touchend', stopDraggingMenu);
+    }
+
+    // Initialize positions
+    buttonX = 15;
+    buttonY = 15;
+    menuX = 15;
+    menuY = 90;
 
     // Prevent context menu on long press
     window.addEventListener('contextmenu', (e) => e.preventDefault());
